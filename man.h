@@ -3,6 +3,7 @@
 #include "boy.h"
 #define MAN_TYPE  (man_get_type())
 #define MAN(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj),MAN_TYPE,Man))
+#define IS_MAN(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), MAN_TYPE))
 typedef struct _Man Man;
 typedef struct _ManClass ManClass;
 struct _Man {
@@ -15,6 +16,7 @@ struct _ManClass {
 };
 GType man_get_type(void);
 Man*  man_new(void);
+void man_free(Man *man);
 gchar* man_get_gob(Man *man);
 void  man_set_job(Man *man, gchar *job);
 Man*  man_new_with_name_age_and_job(gchar *name, gint age, gchar *job);

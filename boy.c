@@ -1,11 +1,15 @@
 /* boy.c */
 #include "boy.h"
 enum { BOY_BORN, LAST_SIGNAL };
+//https://blog.csdn.net/chen_jianjian/article/details/79855345
+static gpointer boy_parent_class = NULL;
 static gint boy_signals[LAST_SIGNAL] = { 0 };
 static void boy_cry (void);
 static void boy_born(void);
 static void boy_init(Boy *boy);
 static void boy_class_init(BoyClass *boyclass);
+void boy_dispose(GObject *gobject);
+void boy_finalize(GObject *gobject);
 GType boy_get_type(void)
 {
     static GType boy_type = 0;
@@ -30,6 +34,7 @@ static void boy_init(Boy *boy)
     boy->name = "none";
     boy->cry = boy_cry;
 }
+
 static void boy_class_init(BoyClass *boyclass)
 {
     boyclass->boy_born = boy_born;
@@ -40,6 +45,10 @@ static void boy_class_init(BoyClass *boyclass)
                 NULL,NULL,
                 g_cclosure_marshal_VOID__VOID,
                 G_TYPE_NONE, 0, NULL);
+    boy_parent_class=g_type_class_peek_parent (boyclass);
+    GObjectClass *base_class = G_OBJECT_CLASS (boyclass);
+    base_class->dispose      = boy_dispose;
+    base_class->finalize     = boy_finalize;
 }
 Boy *boy_new(void)
 {
@@ -47,6 +56,21 @@ Boy *boy_new(void)
     boy = g_object_new(BOY_TYPE, NULL);
     g_signal_emit(boy,boy_signals[BOY_BORN],0);
     return boy;
+}
+void boy_free(Boy *boy){
+    g_assert(boy!= NULL);
+    g_return_if_fail(IS_BOY(boy));
+
+    g_object_unref(G_OBJECT(boy));    
+}
+//http://garfileo.is-programmer.com/2011/3/21/gobject-signal.25477.html
+void boy_dispose(GObject *gobject){
+    G_OBJECT_CLASS (boy_parent_class)->dispose (gobject);
+    g_print("boy dispose ......\n");
+}
+void boy_finalize(GObject *gobject){
+    G_OBJECT_CLASS (boy_parent_class)->finalize(gobject);
+    g_print("boy  finalize ......\n");
 }
 int boy_get_age(Boy *boy)
 {
@@ -90,6 +114,7 @@ static void boy_cry (void)
 {
     g_print("The Boy is crying ......\n");
 }
+//http://garfileo.is-programmer.com/2011/3/25/gobject-signal-extra-1.25576.html
 static void boy_born(void)
 {
     g_print("Message : A boy was born .\n");

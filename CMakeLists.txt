@@ -26,17 +26,24 @@ include_directories(${Glib_INCLUDE_DIRS} ${GObject_INCLUDE_DIRS})
 
 set(boy_LIB 
 boy.c
-man.c)
+man.c
+signal-demo.c
+)
 
 add_library(boy STATIC ${boy_LIB})
 
-set(EXECUTABLE_NAME "hello")
-add_executable(${EXECUTABLE_NAME} test.c)
+set(EXECUTABLE_NAME "man")
+add_executable(${EXECUTABLE_NAME} boy-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 
 set(EXECUTABLE_NAME "peek")
 add_executable(${EXECUTABLE_NAME} peek.c)
+target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+
+#http://garfileo.is-programmer.com/2011/3/25/gobject-signal-extra-1.25576.html
+set(EXECUTABLE_NAME "signal")
+add_executable(${EXECUTABLE_NAME} signal-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 

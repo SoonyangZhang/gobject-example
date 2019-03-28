@@ -1,8 +1,11 @@
 /* man.c */
 #include "man.h"
+static gpointer man_parent_class = NULL;
 static void man_bye(void);
 static void man_init(Man *man);
 static void man_class_init(ManClass *man);
+void man_dispose(GObject *gobject);
+void man_finalize(GObject *gobject);
 GType man_get_type(void)
 {
     static GType man_type = 0;
@@ -38,13 +41,37 @@ static void man_class_init(ManClass *kclass)
 // my test for override
     BoyClass *boyclass=BOY_CLASS(kclass);
     boyclass->boy_born=man_born;
-    printf("man class init\n");
+    man_parent_class=g_type_class_peek_parent (kclass);
+    GObjectClass *base_class = G_OBJECT_CLASS (kclass);
+    base_class->dispose      = man_dispose;
+    base_class->finalize     = man_finalize;
+}
+void from_parent(Boy *boy){
+    g_print("signal triggered\n");
 }
 Man*  man_new(void)
 {
     Man *man;
     man = g_object_new(MAN_TYPE, 0);
+    g_signal_connect(
+        man,
+        "boy_born",
+        (GCallback)from_parent,
+        NULL);
     return man;
+}
+void man_free(Man *man){
+    g_assert(man!= NULL);
+    g_return_if_fail(IS_MAN(man));
+    g_object_unref(G_OBJECT(man)); 
+}
+void man_dispose(GObject *gobject){
+    G_OBJECT_CLASS (man_parent_class)->dispose (gobject);
+    g_print("man dispose ......\n");
+}
+void man_finalize(GObject *gobject){
+    G_OBJECT_CLASS (man_parent_class)->finalize(gobject);
+    g_print("man  finalize ......\n");
 }
 gchar* man_get_gob(Man *man)
 {

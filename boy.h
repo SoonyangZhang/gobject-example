@@ -5,6 +5,7 @@
 #define BOY_TYPE (boy_get_type())
 #define BOY(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj),BOY_TYPE,Boy))
 #define BOY_CLASS(class) (G_TYPE_CHECK_CLASS_CAST ((class), BOY_TYPE, BoyClass))
+#define IS_BOY(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), BOY_TYPE))
 typedef struct _Boy Boy;
 typedef struct _BoyClass BoyClass;
 struct _Boy {
@@ -21,6 +22,7 @@ void (*boy_born)(void);
 };
 GType   boy_get_type(void);
 Boy*  boy_new(void);
+void boy_free(Boy *boy);
 int boy_get_age(Boy *boy);
 void    boy_set_age(Boy *boy, int age);
 char* boy_get_name(Boy *boy);
