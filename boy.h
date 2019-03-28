@@ -4,6 +4,7 @@
 #include <glib-object.h>
 #define BOY_TYPE (boy_get_type())
 #define BOY(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj),BOY_TYPE,Boy))
+#define BOY_CLASS(class) (G_TYPE_CHECK_CLASS_CAST ((class), BOY_TYPE, BoyClass))
 typedef struct _Boy Boy;
 typedef struct _BoyClass BoyClass;
 struct _Boy {
@@ -28,4 +29,5 @@ Boy*  boy_new_with_name(gchar *name);
 Boy*  boy_new_with_age(gint age);
 Boy*  boy_new_with_name_and_age(gchar *name, gint age);
 void  boy_info(Boy *boy);
+void  release_signal(Boy *boy);
 #endif /* __BOY_H__*/

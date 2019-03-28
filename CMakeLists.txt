@@ -23,13 +23,20 @@ find_package(Glib)
 find_package(GObject)
 include_directories(${CMAKE_SOURCE_DIR}/)
 include_directories(${Glib_INCLUDE_DIRS} ${GObject_INCLUDE_DIRS})
-set(SRC_LIST 
-test.c
+
+set(boy_LIB 
 boy.c
 man.c)
-set(EXECUTABLE_NAME "hello")
-add_executable(${EXECUTABLE_NAME} ${SRC_LIST})
-target_link_libraries(${EXECUTABLE_NAME}  ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
+add_library(boy STATIC ${boy_LIB})
+
+set(EXECUTABLE_NAME "hello")
+add_executable(${EXECUTABLE_NAME} test.c)
+target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+
+
+set(EXECUTABLE_NAME "peek")
+add_executable(${EXECUTABLE_NAME} peek.c)
+target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 

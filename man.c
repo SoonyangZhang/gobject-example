@@ -2,7 +2,7 @@
 #include "man.h"
 static void man_bye(void);
 static void man_init(Man *man);
-static void man_class_init(Man *man);
+static void man_class_init(ManClass *man);
 GType man_get_type(void)
 {
     static GType man_type = 0;
@@ -26,8 +26,19 @@ static void man_init(Man *man)
     man->job = "none";
     man->bye = man_bye;
 }
-static void man_class_init(Man *man)
+static void man_cry (void)
 {
+    g_print("The Man is crying ......\n");
+}
+static void man_born(){
+    g_print("mothod override : A man is create .\n");
+}
+static void man_class_init(ManClass *kclass)
+{
+// my test for override
+    BoyClass *boyclass=BOY_CLASS(kclass);
+    boyclass->boy_born=man_born;
+    printf("man class init\n");
 }
 Man*  man_new(void)
 {

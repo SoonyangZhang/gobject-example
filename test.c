@@ -23,4 +23,5 @@ int main(int argc, char *argv[])
     brown = man_new_with_name_age_and_job("Brown", 30, "Teacher");
     brown->bye();
     man_info(brown);
+    release_signal(brown);
 }

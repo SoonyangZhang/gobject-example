@@ -99,3 +99,6 @@ void  boy_info(Boy *boy)
     g_print("The Boy name is %s\n", boy->name);
     g_print("The Boy age is %d\n", boy->age);
 }
+void  release_signal(Boy *boy){
+    g_signal_emit(boy,boy_signals[BOY_BORN],0);
+}
