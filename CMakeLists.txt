@@ -27,7 +27,8 @@ include_directories(${Glib_INCLUDE_DIRS} ${GObject_INCLUDE_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/boy)
 add_subdirectory(boy)
-
+include_directories(${CMAKE_SOURCE_DIR}/base)
+add_subdirectory(base)
 
 set(EXECUTABLE_NAME "man")
 add_executable(${EXECUTABLE_NAME} boy/boy-test.c)
@@ -44,8 +45,8 @@ add_executable(${EXECUTABLE_NAME} boy/signal-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 set(EXECUTABLE_NAME "thread")
-add_executable(${EXECUTABLE_NAME} boy/thread-test.c)
-target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES} pthread)
+add_executable(${EXECUTABLE_NAME} base/thread-test.c)
+target_link_libraries(${EXECUTABLE_NAME}  base ${Glib_LIBRARIES} ${GObject_LIBRARIES} pthread)
 
 set(EXECUTABLE_NAME "disk")
 add_executable(${EXECUTABLE_NAME} boy/disk-test.c)

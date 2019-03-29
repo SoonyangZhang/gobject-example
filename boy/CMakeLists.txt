@@ -3,7 +3,6 @@ set(boy_LIB
 boy.c
 man.c
 signal-demo.c
-thread.c
 iusb.c
 udisk.c
 ianimal.c
