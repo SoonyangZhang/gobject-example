@@ -24,26 +24,30 @@ find_package(GObject)
 include_directories(${CMAKE_SOURCE_DIR}/)
 include_directories(${Glib_INCLUDE_DIRS} ${GObject_INCLUDE_DIRS})
 
-set(boy_LIB 
-boy.c
-man.c
-signal-demo.c
-)
 
-add_library(boy STATIC ${boy_LIB})
+include_directories(${CMAKE_SOURCE_DIR}/boy)
+add_subdirectory(boy)
+
 
 set(EXECUTABLE_NAME "man")
-add_executable(${EXECUTABLE_NAME} boy-test.c)
+add_executable(${EXECUTABLE_NAME} boy/boy-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 
 set(EXECUTABLE_NAME "peek")
-add_executable(${EXECUTABLE_NAME} peek.c)
+add_executable(${EXECUTABLE_NAME} boy/peek.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 #http://garfileo.is-programmer.com/2011/3/25/gobject-signal-extra-1.25576.html
 set(EXECUTABLE_NAME "signal")
-add_executable(${EXECUTABLE_NAME} signal-test.c)
+add_executable(${EXECUTABLE_NAME} boy/signal-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
+set(EXECUTABLE_NAME "thread")
+add_executable(${EXECUTABLE_NAME} boy/thread-test.c)
+target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES} pthread)
+
+set(EXECUTABLE_NAME "disk")
+add_executable(${EXECUTABLE_NAME} boy/disk-test.c)
+target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
