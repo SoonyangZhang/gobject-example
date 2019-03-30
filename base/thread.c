@@ -1,44 +1,45 @@
 #include "lazy_micro.h"
 #include "thread.h"
 #include "irunnable.h"
-static ThreadManager *instance_=NULL;
+#include "timeutils.h"
+
+static ThreadManager instance_;
 static MyPlatformThreadRef main_thread_ref_;
 //https://blog.csdn.net/yanbixing123/article/details/52970804
-G_DEFINE_TYPE (ThreadManager, thread_manager, G_TYPE_OBJECT);
 static void thread_manager_init(ThreadManager*self){
-	g_printf ("%s\n",__FUNCTION__);
+	g_printf ("%s %p\n",__FUNCTION__,pthread_self());
 	pthread_key_create(&(self->key),NULL);
+	main_thread_ref_=pthread_self();
 }
-static void thread_manager_class_init(ThreadManagerClass *klass){
-
-}
-ThreadManager* thread_manager_new(){
-	ThreadManager *instance;
-	instance=g_object_new(THREAD_MANAGER_TYPE,NULL);
-	return instance;
+static void __attribute__((constructor)) thread_manager_constructor(void){
+	thread_manager_init(&instance_);
 }
 ThreadManager* thread_manager_instance(){
-	if(instance_){
-		return instance_;
-	}
-	instance_=thread_manager_new();
-    main_thread_ref_=pthread_self();
-	return instance_;
+	return &instance_;
 }
-gboolean is_thead_ref_equal(MyPlatformThreadRef a,MyPlatformThreadRef b){
-	return a==b;
+bool is_thead_ref_equal(MyPlatformThreadRef a,MyPlatformThreadRef b){
+    //g_print("%p,%p\n",a,b);
+	return pthread_equal(a,b);
 }
-gboolean is_main_thread(){
+bool is_main_thread(){
 	return is_thead_ref_equal(current_thead_ref(),main_thread_ref_);
 }
 MyPlatformThreadRef current_thead_ref(){
 	return pthread_self();
 }
-
-
+void thread_manager_set_current_thread(MyThread*thread){
+    ThreadManager *manager=thread_manager_instance();
+	pthread_setspecific(manager->key,thread);
+}
+MyThread * thread_manager_current_thread(){
+	ThreadManager *manager=thread_manager_instance();
+	MyThread *current=pthread_getspecific(manager->key);
+	return current;
+}
 
 
 G_DEFINE_TYPE (MyThread, my_thread, G_TYPE_OBJECT);
+void my_thread_wrap_current_thread(MyThread *thread);
 void* my_thread_pre_run(void *self);
 
 void my_thread_dispose(GObject *gobject){
@@ -67,7 +68,7 @@ void my_thread_free(MyThread *self){
     g_object_unref(G_OBJECT(self));
 }
 
-gboolean my_thread_start(MyThread *thread,gpointer runnable){
+bool my_thread_start(MyThread *thread,gpointer runnable){
 	thread->runnable=runnable;
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
@@ -85,6 +86,7 @@ void my_thread_join(MyThread *thread){
 void* my_thread_pre_run(void *self){
 	MyThread *thread=MY_THREAD(self);
 	thread->running=TRUE;
+	thread_manager_set_current_thread(self);
 	if(thread->runnable){
 		my_irunnable_run(thread->runnable,thread,NULL);
 	}else{
@@ -92,4 +94,22 @@ void* my_thread_pre_run(void *self){
 		g_print("no runnable function");
 	}
     return NULL;
+}
+MyThread* my_thread_current(void){
+	MyThread *thread=thread_manager_current_thread();
+	if(!thread&&is_main_thread()){
+        thread=my_thread_new();
+        my_thread_wrap_current_thread(thread);
+	}
+	return thread;
+}
+bool thread_is_current_thread(MyThread *thread){
+	return thread_manager_current_thread()==thread;
+}
+void my_thread_wrap_current_thread(MyThread *thread){
+	thread->thread=pthread_self();
+	thread_manager_set_current_thread(thread);
+}
+bool my_thread_sleep_ms(int milliseconds){
+	base_sleep(milliseconds);
 }
