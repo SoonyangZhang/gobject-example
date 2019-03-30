@@ -8,15 +8,19 @@
 #include <glib-object.h>
 #include <pthread.h>
 #define THREAD_MANAGER_TYPE (thread_manager_get_type ())
+
+
 #define MY_THREAD_TYPE (my_thread_get_type ())
+#define MY_THREAD(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), MY_THREAD_TYPE, MyThread))
+#define MY_IS_THREAD(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), MY_THREAD_TYPE))
+#define MY_THREAD_CLASS(klass) \
+        (G_TYPE_CHECK_CLASS_CAST ((klass), MY_THREAD_TYPE, MyThreadClass))
+#define MY_IS_THREAD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), MY_THREAD_TYPE))
+#define MY_THREAD_GET_CLASS(obj) \
+        (G_TYPE_INSTANCE_GET_CLASS ((obj),MY_THREAD_TYPE,MyThreadClass))
 typedef pthread_t MyPlatformThreadRef;
 typedef struct _ThreadManager ThreadManager;
 typedef struct _ThreadManagerClass ThreadManagerClass;
-
-#define MY_THREAD_CLASS(class) \
-	(G_TYPE_CHECK_CLASS_CAST ((class), MY_THREAD_TYPE, MyThreadClass));
-#define MY_THREAD(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj),MY_THREAD_TYPE,MyThread))
-#define IS_MY_THREAD(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), MY_THREAD_TYPE))
 typedef struct _MyThread MyThread;
 typedef struct _MyThreadClass MyThreadClass;
 struct _ThreadManager{

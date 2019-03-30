@@ -1,3 +1,4 @@
+#include "lazy_micro.h"
 #include "thread.h"
 #include "irunnable.h"
 static ThreadManager *instance_=NULL;
@@ -35,24 +36,35 @@ MyPlatformThreadRef current_thead_ref(){
 }
 
 
-void* my_thread_pre_run(void *self);
+
 
 G_DEFINE_TYPE (MyThread, my_thread, G_TYPE_OBJECT);
+void* my_thread_pre_run(void *self);
+
+void my_thread_dispose(GObject *gobject){
+    G_OBJECT_CLASS (my_thread_parent_class)->dispose(gobject);
+}
+void my_thread_finalize(GObject *gobject){
+    G_OBJECT_CLASS (my_thread_parent_class)->finalize(gobject);
+}
 static void my_thread_init(MyThread *self){
 
 }
 static void my_thread_class_init(MyThreadClass *kclass){
-
+    GObjectClass *base_class = G_OBJECT_CLASS (kclass);
+    base_class->dispose      = my_thread_dispose;
+    base_class->finalize      = my_thread_finalize;
 }
 MyThread *my_thread_new(){
 	MyThread *instance;
 	instance=g_object_new(MY_THREAD_TYPE,NULL);
 	return instance;
 }
-void my_thread_free(MyThread *thread){
-    g_assert(thread!= NULL);
-    g_return_if_fail(IS_MY_THREAD(thread));
-    g_object_unref(G_OBJECT(thread));
+void my_thread_free(MyThread *self){
+    g_assert(self!= NULL);
+    //g_return_if_fail(IS_MY_THREAD(self));
+    g_return_if_fail(lazy_is_obj(MY,THREAD,self));
+    g_object_unref(G_OBJECT(self));
 }
 
 gboolean my_thread_start(MyThread *thread,gpointer runnable){

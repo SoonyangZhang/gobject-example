@@ -2,6 +2,7 @@
 #include "irunnable.h"
 #include "print.h"
 #include <signal.h>
+#include <unistd.h>
 static int running=1;
 void signal_exit_handler(int sig)
 {
@@ -16,8 +17,9 @@ int main(){
     MyThread *thread=my_thread_new();
     my_thread_start(thread,print);
     while(running){
-        
+        sleep(1);
     }
     my_thread_join(thread);
+    my_thread_free(thread);
     return 0;
 }

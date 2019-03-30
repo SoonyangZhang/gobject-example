@@ -1,3 +1,4 @@
+#include "lazy_micro.h"
 #include "print.h"
 #include "thread.h"
 #include <unistd.h>
@@ -34,11 +35,11 @@ static void my_irunnable_interface_init(MyIRunnableInterface *iface){
 }
 MyPrint *my_print_new(void){
     MyPrint *ins;
-    ins = g_object_new(MY_TYPE_PRINT, 0);
+    ins = g_object_new(MY_PRINT_TYPE, 0);
     return ins;
 }
 void my_print_free(MyPrint *self){
     g_assert(self!= NULL);
-    g_return_if_fail(MY_IS_PRINT(self));
+    g_return_if_fail(lazy_is_obj(MY,PRINT,self));
     g_object_unref(G_OBJECT(self));
 }
