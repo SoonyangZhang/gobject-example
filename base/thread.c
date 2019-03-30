@@ -68,8 +68,9 @@ void my_thread_free(MyThread *self){
     g_object_unref(G_OBJECT(self));
 }
 
-bool my_thread_start(MyThread *thread,gpointer runnable){
+bool my_thread_start(MyThread *thread,gpointer runnable,gpointer userdata){
 	thread->runnable=runnable;
+    thread->userdata=userdata;
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	int error=pthread_create(&thread->thread,&attr,my_thread_pre_run,thread);
@@ -88,7 +89,7 @@ void* my_thread_pre_run(void *self){
 	thread->running=TRUE;
 	thread_manager_set_current_thread(self);
 	if(thread->runnable){
-		my_irunnable_run(thread->runnable,thread,NULL);
+		my_irunnable_run(thread->runnable,thread->userdata);
 	}else{
 		//just return
 		g_print("no runnable function");

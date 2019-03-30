@@ -32,6 +32,7 @@ struct _MyThread{
 	GObject parent;
     pthread_t thread;
 	gpointer runnable;
+    gpointer userdata;
 	bool running;
 };
 struct _MyThreadClass{
@@ -40,7 +41,7 @@ struct _MyThreadClass{
 GType my_thread_get_type(void);
 MyThread *my_thread_new();
 void my_thread_free(MyThread *thread);
-bool my_thread_start(MyThread *thread,gpointer runnable);
+bool my_thread_start(MyThread *thread,gpointer runnable,gpointer userdata);
 void my_thread_join(MyThread *thread);
 MyThread*my_thread_current (void);
 bool thread_is_current_thread(MyThread *thread);

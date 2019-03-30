@@ -11,8 +11,8 @@ typedef struct _MyIRunnable MyIRunnable;
 typedef struct _MyIRunnableInterface MyIRunnableInterface;
 struct _MyIRunnableInterface{
 	GTypeInterface parent_interface;
-	void (*run)(MyIRunnable *self,gpointer thread, gpointer userdata);
+	void (*run)(MyIRunnable *self, gpointer userdata);
 };
 GType my_irunnable_get_type (void);
-void my_irunnable_run(MyIRunnable * callback,gpointer thread, gpointer userdata);
+void my_irunnable_run(MyIRunnable * callback, gpointer userdata);
 #endif /* EXAMPLE_IRUNNABLE_H_ */

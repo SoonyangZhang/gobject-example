@@ -6,9 +6,9 @@ static void
 my_irunnable_default_init (MyIRunnableInterface *iface) {
 
 }
-void my_irunnable_run(MyIRunnable * callback,gpointer thread, gpointer userdata){
+void my_irunnable_run(MyIRunnable * callback, gpointer userdata){
 	g_return_if_fail (MY_IS_IRUNNABLE(callback));
-	MY_IRUNNABLE_GET_INTERFACE(callback)->run(callback,thread,userdata);
+	MY_IRUNNABLE_GET_INTERFACE(callback)->run(callback,userdata);
 }
 
 

@@ -6,10 +6,11 @@ static void my_irunnable_interface_init(MyIRunnableInterface *iface);
 G_DEFINE_TYPE_WITH_CODE (MyPrint, my_print, G_TYPE_OBJECT,
 G_IMPLEMENT_INTERFACE (MY_TYPE_IRUNNABLE, my_irunnable_interface_init));
 
-void my_print_run(MyIRunnable *iface,gpointer thread,gpointer userdata){
-	MyThread *mythread=MY_THREAD(thread);
+void my_print_run(MyIRunnable *iface,gpointer userdata){
+	MyThread *thread=my_thread_current();
 	MyPrint *self=MY_PRINT(iface);
-	while(mythread->running){
+    g_print("print thread %p\n",thread);
+	while(thread->running){
 		self->conuter++;
         g_print("add %d\n",self->conuter);
 		sleep(1);
