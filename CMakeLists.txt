@@ -21,8 +21,9 @@ message(STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
 ##https://github.com/gammu/gammu/tree/master/cmake
 find_package(Glib)
 find_package(GObject)
+find_package(Gio)
 include_directories(${CMAKE_SOURCE_DIR}/)
-include_directories(${Glib_INCLUDE_DIRS} ${GObject_INCLUDE_DIRS})
+include_directories(${Glib_INCLUDE_DIRS} ${GObject_INCLUDE_DIRS},${GIO_INCLUDE_DIR})
 
 
 include_directories(${CMAKE_SOURCE_DIR}/boy)
@@ -34,6 +35,15 @@ set(EXECUTABLE_NAME "man")
 add_executable(${EXECUTABLE_NAME} boy/boy-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
+
+set(EXECUTABLE_NAME "child")
+add_executable(${EXECUTABLE_NAME} boy/child-test.c)
+target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+
+
+set(EXECUTABLE_NAME "foo")
+add_executable(${EXECUTABLE_NAME} boy/fooobject.c)
+target_link_libraries(${EXECUTABLE_NAME}  ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 set(EXECUTABLE_NAME "peek")
 add_executable(${EXECUTABLE_NAME} boy/peek.c)
@@ -51,4 +61,18 @@ target_link_libraries(${EXECUTABLE_NAME}  base ${Glib_LIBRARIES} ${GObject_LIBRA
 set(EXECUTABLE_NAME "disk")
 add_executable(${EXECUTABLE_NAME} boy/disk-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+
+
+set(EXECUTABLE_NAME "server")
+add_executable(${EXECUTABLE_NAME} net/tcpserver.c)
+target_link_libraries(${EXECUTABLE_NAME} ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+
+set(EXECUTABLE_NAME "client")
+add_executable(${EXECUTABLE_NAME} net/tcpclient.c)
+target_link_libraries(${EXECUTABLE_NAME} ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+
+
+set(EXECUTABLE_NAME "loop")
+add_executable(${EXECUTABLE_NAME} net/loop_test.c)
+target_link_libraries(${EXECUTABLE_NAME} base ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES} pthread)
 
