@@ -1,7 +1,7 @@
 #include "signal-demo.h"
  
 static void
-my_signal_handler (gpointer *instance,gpointer *ptr, gpointer userdata)
+my_signal_handler (gpointer instance,gpointer ptr, gpointer userdata)
 {
         gchar *buffer=(gchar*)ptr;
         g_print ("my_signal_handler said: %s\n", buffer);

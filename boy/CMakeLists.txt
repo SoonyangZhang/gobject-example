@@ -10,5 +10,6 @@ ianimal.c
 human.c
 my_parent.c
 my_child.c
+my_add.c
 )
 add_library(boy STATIC ${boy_LIB})

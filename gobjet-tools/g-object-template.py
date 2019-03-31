@@ -1,4 +1,7 @@
 '''
+#ifndef MY_HUMAN_H_
+#define MY_HUMAN_H_
+#include <glib-object.h>
 #define MY_TYPE_HUMAN (my_human_get_type ())
 #define MY_HUMAN(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), MY_TYPE_HUMAN, MyHuman))
 #define MY_IS_HUMAN(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), MY_TYPE_HUMAN))
@@ -21,6 +24,7 @@ struct _MyHumanClass{
 GType my_human_get_type (void);
 MyHuman *my_human_new(void);
 void my_print_free(MyPrint *self);
+#endif
 '''
 import sys
 def normallize(name):
@@ -86,6 +90,16 @@ elif argc==4:
 
 fileOut=fucntion_name_p+".h"
 fout=open(fileOut,'w')
+string="#ifndef %s_%s_H_"
+stringout=string%(NAMESPACE,OBJECTNAME);
+fout.write(stringout+"\n");
+string="#define %s_%s_H_"
+stringout=string%(NAMESPACE,OBJECTNAME);
+fout.write(stringout+"\n");
+string="#include <glib-object.h>"
+fout.write(string+"\n");
+string="#ifdef __cplusplus\nextern \"C\"\n{\n#endif\n"
+fout.write(string+"\n");
 string="#define %s (%s_get_type ())"
 stringout=string%(object_type,fucntion_name_p)
 fout.write(stringout+"\n");
@@ -159,10 +173,16 @@ fout.write(stringout+"\n");
 string="void %s_free(%s *self);"
 stringout=string%(fucntion_name_p,struct_name)
 fout.write(stringout+"\n");
+fout.write("\n")
+string="#ifdef __cplusplus\n}\n#endif\n"
+fout.write(string+"\n");
+string="#endif"
+fout.write(string+"\n");
 fout.close();
 
 '''
 #include "human.h"
+G_DEFINE_TYPE (MyAdd, my_add, G_TYPE_OBJECT);
 void my_human_dispose(GObject *gobject){
 	G_OBJECT_CLASS (my_human_parent_class)->dispose(gobject);
 }
@@ -194,6 +214,13 @@ fout=open(fileOut,'w')
 string="#include \"lazy_micro.h\""
 fout.write(string+"\n");
 fout.write("\n");
+
+string="#include "+'\"'+fucntion_name_p+".h"+'\"'
+fout.write(string+"\n");
+fout.write("\n");
+string="G_DEFINE_TYPE (%s, %s, G_TYPE_OBJECT);"
+stringout=string%(struct_name,fucntion_name_p)
+fout.write(stringout+"\n");
 
 lazy_is_object="lazy_is_obj(%s,%s,self)"%(NAMESPACE,OBJECTNAME)
 lazy_is_class="lazy_is_class(%s,%s,kclass)"%(NAMESPACE,OBJECTNAME)
