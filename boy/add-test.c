@@ -27,6 +27,7 @@ int main(){
     MyAdd *obj2=my_add_new();
     MyAddClass *kclass;
     kclass=MY_ADD_GET_CLASS(obj1);
+    g_print("1 %p,%p\n",obj1,kclass);
     kclass->virtual_add=add1;
     int a=1;
     int b=2;
@@ -38,6 +39,7 @@ int main(){
     g_signal_emit_by_name(obj1,"add",a,G_TYPE_NONE);
     kclass->print(obj1);
     kclass=MY_ADD_GET_CLASS(obj2);
+    g_print("2 %p,%p\n",obj1,kclass);
     kclass->virtual_add=add2;
     g_signal_emit_by_name(obj2,"add",a,G_TYPE_NONE);
     kclass->print(obj2);

@@ -52,10 +52,19 @@ set(EXECUTABLE_NAME "peek")
 add_executable(${EXECUTABLE_NAME} boy/peek.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
+set(EXECUTABLE_NAME "list")
+add_executable(${EXECUTABLE_NAME} boy/list-test.c)
+target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+
 #http://garfileo.is-programmer.com/2011/3/25/gobject-signal-extra-1.25576.html
 set(EXECUTABLE_NAME "signal")
 add_executable(${EXECUTABLE_NAME} boy/signal-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+
+
+set(EXECUTABLE_NAME "mbuf")
+add_executable(${EXECUTABLE_NAME} base/mbuf-test.c)
+target_link_libraries(${EXECUTABLE_NAME}  base ${Glib_LIBRARIES} ${GObject_LIBRARIES} pthread)
 
 set(EXECUTABLE_NAME "thread")
 add_executable(${EXECUTABLE_NAME} base/thread-test.c)
