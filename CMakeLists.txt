@@ -30,6 +30,8 @@ include_directories(${CMAKE_SOURCE_DIR}/boy)
 add_subdirectory(boy)
 include_directories(${CMAKE_SOURCE_DIR}/base)
 add_subdirectory(base)
+include_directories(${CMAKE_SOURCE_DIR}/net)
+add_subdirectory(net)
 
 set(EXECUTABLE_NAME "man")
 add_executable(${EXECUTABLE_NAME} boy/boy-test.c)
@@ -86,7 +88,7 @@ target_link_libraries(${EXECUTABLE_NAME} ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GO
 
 set(EXECUTABLE_NAME "address")
 add_executable(${EXECUTABLE_NAME} net/address-test.c)
-target_link_libraries(${EXECUTABLE_NAME} base ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+target_link_libraries(${EXECUTABLE_NAME}  net base ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 set(EXECUTABLE_NAME "loop")
 add_executable(${EXECUTABLE_NAME} net/loop_test.c)

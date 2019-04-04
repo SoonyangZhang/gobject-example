@@ -12,5 +12,6 @@ my_parent.c
 my_child.c
 my_add.c
 my_list.c
+my_add_child.c
 )
 add_library(boy STATIC ${boy_LIB})

@@ -1,4 +1,5 @@
 #include "my_add.h"
+#include "my_add_child.h"
 #include <stdio.h>
 void add1(gpointer instance,gint offset,gpointer userdata){
     g_print("%s,%p,%d\n",__FUNCTION__,instance,offset);
@@ -40,10 +41,15 @@ int main(){
     kclass->print(obj1);
     kclass=MY_ADD_GET_CLASS(obj2);
     g_print("2 %p,%p\n",obj1,kclass);
-    kclass->virtual_add=add2;
     g_signal_emit_by_name(obj2,"add",a,G_TYPE_NONE);
     kclass->print(obj2);
     my_add_free(obj1);
     my_add_free(obj2);
+	MyAddChild *obj3=my_add_child_new();
+    g_signal_emit_by_name(obj3,"add",a,G_TYPE_NONE);
+	MyAddChildClass *my_child_class;
+	my_child_class=MY_ADDCHILD_GET_CLASS(obj3);
+    my_child_class->parent_class.print(obj3);
+    my_add_child_free(obj3);
     return 0;
 }

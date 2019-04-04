@@ -17,7 +17,6 @@ struct _MyChildPriv{
 };
 struct _MyChild{
     MyParent parent;
-    MyChildPriv priv;
 };
 struct _MyChildClass{
     MyParentClass parent_class;

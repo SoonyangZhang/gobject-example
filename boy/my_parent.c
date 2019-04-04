@@ -20,6 +20,7 @@ void my_parent_set_prop(GObject      *object,
                    GParamSpec   *pspec){
 	MyParent *self=MY_PARENT(object);
     MyParentPriv *priv=MY_PARENT_GET_PRIVATE(self);
+	g_print("priv addr a %p\n",priv);
 	switch(prop_id){
 	case PROP_A:{
 		priv->a=g_value_get_int(value);

@@ -4,7 +4,6 @@ thread.c
 irunnable.c
 print.c
 timeutils.c
-netutils.cc
 alloc.c
 mbuf.c
 )

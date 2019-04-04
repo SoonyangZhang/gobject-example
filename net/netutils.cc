@@ -253,6 +253,27 @@ int inet_pton_v6(const char* src, void* dst) {
   memcpy(dst, &an_addr, sizeof(an_addr));
   return 1;
 }
+int sockaddr_init(struct sockaddr_storage* addr,int familiy,
+                  char*ip,uint16_t port){
+    memset(addr,0,sizeof(*addr));
+    if(familiy==AF_INET){
+        struct sockaddr_in *_addr = (struct sockaddr_in*)addr;
+        _addr->sin_family = AF_INET;
+        if(rtc_inet_pton(AF_INET,ip,&_addr->sin_addr)!=1){
+            return -1;
+        }
+        _addr->sin_port=htons(port);
+    }
+    if(familiy==AF_INET6){
+        struct sockaddr_in6 *_addr = (struct sockaddr_in6*)addr;
+        _addr->sin6_family = AF_INET6;
+        if(rtc_inet_pton(AF_INET6,ip,&_addr->sin6_addr)!=1){
+            return -1;
+        }
+        _addr->sin6_port=htons(port);
+    }
+    return 0;
+}
 // Implementation of inet_ntop (create a printable representation of an
 // ip address). XP doesn't have its own inet_ntop, and
 // WSAAddressToString requires both IPv6 to be  installed and for Winsock

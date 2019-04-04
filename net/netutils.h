@@ -17,6 +17,8 @@ extern "C"
 #endif
 const char *rtc_inet_ntop(int af, const void *src, char* dst, socklen_t size);
 int rtc_inet_pton(int af, const char* src, void *dst);
+int sockaddr_init(struct sockaddr_storage* addr,int familiy,
+                  char*ip,uint16_t port);
 #ifdef __cplusplus
 }
 #endif

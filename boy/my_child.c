@@ -1,6 +1,8 @@
 #include "lazy_micro.h"
 #include "my_child.h"
 G_DEFINE_TYPE (MyChild, my_child, MY_PARENT_TYPE);
+#define MY_CHILD_GET_PRIVATE(obj) \
+        G_TYPE_INSTANCE_GET_PRIVATE ((obj),MY_CHILD_TYPE,MyChildPriv)
 enum{
 PROP_0,//must
 PROP_B,
@@ -19,9 +21,11 @@ void my_child_set_prop(GObject      *object,
                    const GValue *value,
                    GParamSpec   *pspec){
 	MyChild *self=MY_CHILD(object);
+	MyChildPriv *priv=MY_CHILD_GET_PRIVATE(self);
+	g_print("priv addr b %p\n",priv);
 	switch(prop_id){
 	case PROP_B:{
-		self->priv.b=g_value_get_int(value);
+		priv->b=g_value_get_int(value);
 		break;
 	}
 
@@ -36,9 +40,10 @@ void my_child_get_prop(GObject    *object,
                    GValue     *value,
                    GParamSpec *pspec){
 	MyChild *self=MY_CHILD(object);
+	MyChildPriv *priv=MY_CHILD_GET_PRIVATE(self);
 	switch(prop_id){
 	case PROP_B:{
-		g_value_set_int(value,self->priv.b);
+		g_value_set_int(value,priv->b);
 		break;
 	}
 	default:{
@@ -48,6 +53,7 @@ void my_child_get_prop(GObject    *object,
 	}
 }
 static void my_child_class_init(MyChildClass *kclass){
+	g_type_class_add_private (kclass, sizeof (MyChildPriv));
     GObjectClass *base_class = G_OBJECT_CLASS (kclass);
     base_class->dispose      = my_child_dispose;
     base_class->finalize      = my_child_finalize;

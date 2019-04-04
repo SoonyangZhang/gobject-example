@@ -1,21 +1,28 @@
 #include <stdio.h>
 #include <stdint.h>
 #include  "netutils.h"
+#include "my_ev_poller.h"
+#include "my_dispatcher.h"
+#include "my_dispatcher_child.h"
 int main(){
-    struct in_addr  in4;
-    printf("%d\n",sizeof(in4));
-    char *ip="127.0.0.1";
-    rtc_inet_pton(AF_INET,ip,&in4);
-    printf("%d\n",in4);
-    char buf[INET6_ADDRSTRLEN];
-    rtc_inet_ntop(AF_INET,(void*)&in4,buf,INET6_ADDRSTRLEN);
-    printf("%s\n",buf);
-    char* ipv6 = "2001:db8:1020:3040:5060:7080:90a0:b0c0";
-    struct in6_addr in6;
-    char buf6[INET6_ADDRSTRLEN];
-    rtc_inet_pton(AF_INET6,ipv6,&in6);
-    rtc_inet_ntop(AF_INET6,(void*)&in6,buf6,INET6_ADDRSTRLEN);
-    printf("%s\n",buf6);
+	MyPollerInterface *pollerimpl=my_get_poller_impl();
+	MyPoller *poller=pollerimpl->poller_create();
+	pollerimpl->poller_destroy(poller);
+	MyDispatcher dispatcher1;
+	pollerimpl->poller_modify(poller,&dispatcher1,MY_EV_ADD_OP);
+	pollerimpl->poller_poll(poller,NULL);
+	MyDispatcher dispatcher2;
+	pollerimpl->poller_modify(poller,&dispatcher2,MY_EV_ADD_OP);
+	pollerimpl->poller_poll(poller,NULL);
+	MyDispatcherChild *child=my_dispatcher_child_new();
+	my_dispatcher_call(child,read_event,child);
+	my_dispatcher_child_call(child,fun1);
+	
+	MY_DISPATCHER(child)->buf=malloc(8*sizeof(uint8_t));
+	MY_DISPATCHER(child)->buf_len=8;
+	printf("%p\n",child->parent.parent.vtable);
+	printf("%p\n",my_dispatcher_child_vtable());
+	my_dispather_child_free(child);
     return 0;
 }
 
