@@ -14,7 +14,6 @@ typedef int SOCKET;
 struct _MyDispatcher{
 	MyObject parent;
 	SOCKET fd;
-	void* poll_plugin;
 	int request_event;
 	uint8_t *buf;
 	int buf_len;

@@ -13,7 +13,7 @@ void my_child_read_event(MyDispatcherChild *self){
 }
 MyDispatcherChild* my_dispatcher_child_new(){
 	MyDispatcherChild *ins;
-	ins=malloc(sizeof(MyDispatcherChild));
+	ins=(MyDispatcherChild *)my_object_create(sizeof(MyDispatcherChild));
 	MY_OBJECT_VTABLE(ins)=my_dispatcher_child_vtable();
 	return ins;
 }
@@ -24,7 +24,7 @@ void my_dispatcher_child_dispose(MyDispatcherChild* obj){
 	MY_OBJECT_CLASS(parent_class)->dispose(MY_OBJECT(obj));
 }
 void my_dispather_child_free(MyDispatcherChild* obj){
-	my_object_free(MY_OBJECT(obj));
+	my_object_unref(MY_OBJECT(obj));
 }
 MyDispatcherChildClass* my_dispatcher_child_vtable(){
 	if(!class_inited){

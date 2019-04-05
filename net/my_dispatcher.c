@@ -14,8 +14,7 @@ int my_dispacther_write(MyDispatcher *self,void *data,int len){
 }
 MyDispatcher* my_dispacher_new(){
 	MyDispatcher *ins;
-	ins=(MyDispatcher*)malloc(sizeof(MyDispatcher));
-	memset(ins,0,sizeof(MyDispatcher));
+	ins=(MyDispatcher*)my_object_create(sizeof(MyDispatcher));
 	MY_OBJECT_VTABLE(ins)=my_dispatcher_vtable();
 	return ins;
 }
@@ -31,7 +30,7 @@ void my_dispatcher_dispose(MyDispatcher* obj){
 	MY_OBJECT_CLASS(parent_class)->dispose(MY_OBJECT(obj));
 }
 void my_dispather_free(MyDispatcher* obj){
-	my_object_free(MY_OBJECT(obj));
+	my_object_unref(MY_OBJECT(obj));
 }
 MyDispatcherClass* my_dispatcher_vtable(){
 	if(!class_inited){
