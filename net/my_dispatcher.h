@@ -24,7 +24,7 @@ struct _MyDispatcherClass{
 	void (*write_event)(MyDispatcher *self);
 	int (*write)(MyDispatcher *self,void *data,int len);
 };
-MyDispatcher* my_dispacher_new();
-void my_dispather_free(MyDispatcher* obj);
+MyDispatcher* my_dispatcher_new();
+void my_dispatcher_unref(MyDispatcher* obj);
 MyDispatcherClass* my_dispatcher_vtable();
 #endif /* MY_DISPATCHER_H_ */

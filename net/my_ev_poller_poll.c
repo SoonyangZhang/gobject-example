@@ -29,25 +29,25 @@ struct _PollPoller{
     int events_capacity;
     bool event_changed;
 };
-int my_poll_monitor_insert(PollPoller*context,MyDispatcher *ele){
+int my_poll_monitor_insert(PollPoller *self,MyDispatcher *ele){
 	MyDispatcherWrapper *found=NULL;
 	int ret=-1;
-	HASH_FIND(hh_id,context->h,&ele,sizeof(MyDispatcher*),found);
+	HASH_FIND(hh_id,self->h,&ele,sizeof(ele),found);
 	if(!found){
 		MyDispatcherWrapper *wrapper=(MyDispatcherWrapper*)my_malloc(sizeof(MyDispatcherWrapper));
 		wrapper->dispatcher_ref=my_object_ref(ele);
-		HASH_ADD_KEYPTR(hh_id,context->h,&ele,sizeof(MyDispatcher*),wrapper);
+		HASH_ADD(hh_id,self->h,dispatcher_ref,sizeof(ele),wrapper);
 		ret=0;
 	}
 	return ret;
 }
-int my_poll_monitor_remove(PollPoller*context,MyDispatcher *ele){
+int my_poll_monitor_remove(PollPoller *self,MyDispatcher *ele){
 	MyDispatcherWrapper *found=NULL;
 	int ret=-1;
-	HASH_FIND(hh_id,context->h,&ele,sizeof(MyDispatcher*),found);
+	HASH_FIND(hh_id,self->h,&ele,sizeof(ele),found);
 	if(found){
-		HASH_DELETE(hh_id,context->h,found);
-		HASH_ADD_KEYPTR(hh_id,context->free_h,&ele,sizeof(MyDispatcher*),found);
+		HASH_DELETE(hh_id,self->h,found);
+		HASH_ADD(hh_id,self->free_h,dispatcher_ref,sizeof(ele),found);
 		ret=0;
 	}
 	return ret;
@@ -57,36 +57,35 @@ void my_poller_free_h_dispose(PollPoller*self){
 	MyDispatcherWrapper *itor_tmp=NULL;
 	HASH_ITER(hh_id,self->free_h,itor,itor_tmp){
 		HASH_DELETE(hh_id,self->free_h,itor);
-		my_object_unref(itor->dispatcher_ref);
+		my_object_unref(MY_OBJECT(itor->dispatcher_ref));
 		itor->dispatcher_ref=NULL;
 		my_free(itor);
 	}
 }
-MyPoller my_poller_create(void){
+MyPoller* my_poller_create(void){
 	PollPoller *poller=(PollPoller*)my_malloc(sizeof(PollPoller));
-	memset(poller,0,sizeof(PollPoller));
 	poller->events_capacity=init_event_buf_size;
 	int len=poller->events_capacity;
 	poller->events=(MyPollWrapper*)my_malloc(len*sizeof(MyPollWrapper));
 	return poller;
 }
-void my_poller_destroy(MyPoller poller){
+void my_poller_destroy(MyPoller* poller){
 	PollPoller *self=(PollPoller*)poller;
 	MyDispatcherWrapper *itor=NULL;
 	MyDispatcherWrapper *itor_tmp=NULL;
 	HASH_ITER(hh_id,self->h,itor,itor_tmp){
-		my_poll_monitor_remove(self,itor);
+		my_poll_monitor_remove(self,itor->dispatcher_ref);
 	}
 	my_poller_free_h_dispose(self);
 	my_free(self->events);
 	my_free(self);
 }
-void my_poller_poll(MyPoller poller,my_ev_timeval *timeout){
+void my_poller_poll(MyPoller* poller,my_ev_timeval *timeout){
 	PollPoller *self=(PollPoller*)poller;
+	my_poller_free_h_dispose(self);
 	if(self->dispatcher_count==0){
 		return;
 	}
-	my_poller_free_h_dispose(self);
 	if(self->event_changed){
 		if(self->events_capacity<self->dispatcher_count){
 			int new_size=sizeof(MyPollWrapper)*(self->events_capacity+extend_event_buf_size);
@@ -99,6 +98,7 @@ void my_poller_poll(MyPoller poller,my_ev_timeval *timeout){
 		MyDispatcherWrapper *itor_tmp=NULL;
 		HASH_ITER(hh_id,self->h,itor,itor_tmp){
 			self->events[i].dispatcher=itor->dispatcher_ref;
+			printf("poll %p\n",self->events[i].dispatcher);
 			i++;
 		int ff=itor->dispatcher_ref->request_event;
 		if(ff&(MY_EV_READ|MY_EV_ACCEPT)){
@@ -107,12 +107,12 @@ void my_poller_poll(MyPoller poller,my_ev_timeval *timeout){
 		if(ff&(MY_EV_WRITE|MY_EV_CONNECT)){
 			self->events[i].pollfd.events|=POLLOUT;
 		}
-		printf("%d\n",i);
 		}
+		printf("%d\n",i);
 		self->event_changed=false;
 	}
 }
-void my_poller_modify(MyPoller poller,void *dispatcher,int op){
+void my_poller_modify(MyPoller* poller,void *dispatcher,int op){
 	PollPoller *self=(PollPoller*)poller;
 	MyDispatcher *my_dis=(MyDispatcher*)dispatcher;
 	int status=0;
@@ -128,6 +128,7 @@ void my_poller_modify(MyPoller poller,void *dispatcher,int op){
 	case MY_EV_DEL_OP:{
 		status=my_poll_monitor_remove(self,dispatcher);
 		if(status==0){
+			printf("del \n");
 			self->event_changed=true;
 			self->dispatcher_count--;
 		}

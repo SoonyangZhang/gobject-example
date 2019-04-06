@@ -90,6 +90,7 @@ set(EXECUTABLE_NAME "address")
 add_executable(${EXECUTABLE_NAME} net/address-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  net base ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
+
 set(EXECUTABLE_NAME "loop")
 add_executable(${EXECUTABLE_NAME} net/loop_test.c)
 target_link_libraries(${EXECUTABLE_NAME} base ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES} pthread)

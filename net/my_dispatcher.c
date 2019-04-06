@@ -12,7 +12,7 @@ int my_dispacther_write(MyDispatcher *self,void *data,int len){
 	printf("%s\n",__FUNCTION__);
 	return 0;
 }
-MyDispatcher* my_dispacher_new(){
+MyDispatcher* my_dispatcher_new(){
 	MyDispatcher *ins;
 	ins=(MyDispatcher*)my_object_create(sizeof(MyDispatcher));
 	MY_OBJECT_VTABLE(ins)=my_dispatcher_vtable();
@@ -29,7 +29,7 @@ void my_dispatcher_dispose(MyDispatcher* obj){
 	MyObjectClass *parent_class=my_object_vtable();
 	MY_OBJECT_CLASS(parent_class)->dispose(MY_OBJECT(obj));
 }
-void my_dispather_free(MyDispatcher* obj){
+void my_dispatcher_unref(MyDispatcher* obj){
 	my_object_unref(MY_OBJECT(obj));
 }
 MyDispatcherClass* my_dispatcher_vtable(){

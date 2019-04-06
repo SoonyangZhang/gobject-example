@@ -1,7 +1,13 @@
 #include "alloc.h"
 #include <stdlib.h>
+#include <string.h>
 void *my_malloc(int size){
-	return malloc(size);
+	void *ins=NULL;
+	ins=malloc(size);
+	if(ins){
+		memset(ins,0,size);
+	}
+	return ins;
 }
 void my_free(void *ptr){
 	free(ptr);
