@@ -37,7 +37,7 @@ void my_dispatcher_child_class_init(void){
 	MyDispatcherChildClass *kclass=&my_dispatcherchild_default_vtable;
 	MyDispatcherClass *parent=my_dispatcher_vtable();
 	memcpy(kclass,parent,sizeof(*parent));
-	kclass->parent_class.read_event=my_child_read_event;
+	kclass->read_event=my_child_read_event;
 	kclass->fun1=my_fun1;
 	kclass->fun2=my_fun2;
 

@@ -1,10 +1,10 @@
 PROJECT(project)
 cmake_minimum_required(VERSION 2.6)
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall  -O2")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -O2")
-SET(CMAKE_BUILD_TYPE "Debug")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall  -O2")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -O2")
+set(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+#SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall  -O2")
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -O2")
 set(CMAKE_CXX_FLAGS "-fPIC")  
 set(CMAKE_C_FLAGS "-fPIC") 
 add_definitions(-D__STDC_FORMAT_MACROS)
@@ -77,19 +77,21 @@ add_executable(${EXECUTABLE_NAME} boy/disk-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 
-set(EXECUTABLE_NAME "server")
+set(EXECUTABLE_NAME "gio_server")
 add_executable(${EXECUTABLE_NAME} net/tcpserver.c)
 target_link_libraries(${EXECUTABLE_NAME} ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
-set(EXECUTABLE_NAME "client")
+set(EXECUTABLE_NAME "gio_client")
 add_executable(${EXECUTABLE_NAME} net/tcpclient.c)
 target_link_libraries(${EXECUTABLE_NAME} ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 
 set(EXECUTABLE_NAME "address")
 add_executable(${EXECUTABLE_NAME} net/address-test.c)
-target_link_libraries(${EXECUTABLE_NAME}  net base ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+target_link_libraries(${EXECUTABLE_NAME}  net base ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES} pthread)
 
+set(EXECUTABLE_NAME "client")
+add_executable(${EXECUTABLE_NAME} net/client.c)
 
 set(EXECUTABLE_NAME "loop")
 add_executable(${EXECUTABLE_NAME} net/loop_test.c)

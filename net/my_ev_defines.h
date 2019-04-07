@@ -3,7 +3,7 @@
 #include <time.h>
 typedef struct timeval my_ev_timeval;
 enum{
-MY_EV_0,
+MY_EV_0_OP,
 MY_EV_ADD_OP,
 MY_EV_DEL_OP,
 MY_EV_MOD_OP,

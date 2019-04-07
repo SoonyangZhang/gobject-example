@@ -22,6 +22,7 @@ struct _MyObject{
 	int lock;
 	int count;
 };
+
 struct _MyObjectClass{
 	void (*dispose)(MyObject*obj);
 };

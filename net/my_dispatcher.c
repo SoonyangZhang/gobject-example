@@ -1,33 +1,59 @@
+#include <sys/types.h>
+#include <sys/socket.h>
 #include "my_dispatcher.h"
+#include "my_ev_poller.h"
 MyDispatcherClass  my_dispatcher_default_vtable;
 static bool class_inited=false;
+#define BUF_SIZE 1500
 void my_dispatcher_class_init();
+int my_dispacther_write(MyDispatcher *self,void *data,int len);
 void my_dispacther_read_event(MyDispatcher *self){
-	printf("%s\n",__FUNCTION__);
+	printf("%s %d\n",__FUNCTION__,self->fd);
+	if(!self||self->closed){
+		return;
+	}
+	uint8_t buf[BUF_SIZE];
+	memset(buf,0,BUF_SIZE);
+	int len=0;
+	len=recv(self->fd,buf,BUF_SIZE,0);
+	if(len){
+	printf("%s\n",buf);
+	my_dispacther_write(self,buf,len);
+	self->closed=true;
+	su_socket_destroy(self->fd);
+	self->fd=-1;
+	MyPollerInterface *pollfun=(MyPollerInterface*)self->pollfun;
+	pollfun->poller_modify(self->poller,self,MY_EV_DEL_OP);
+
+	}
+
 }
 void my_dispacther_write_event(MyDispatcher *self){
 	printf("%s\n",__FUNCTION__);
 }
 int my_dispacther_write(MyDispatcher *self,void *data,int len){
 	printf("%s\n",__FUNCTION__);
-	return 0;
+	int ret=0;
+	ret=send(self->fd,data,len,0);
+	return ret;
 }
 MyDispatcher* my_dispatcher_new(){
 	MyDispatcher *ins;
 	ins=(MyDispatcher*)my_object_create(sizeof(MyDispatcher));
 	MY_OBJECT_VTABLE(ins)=my_dispatcher_vtable();
+	my_dispatcher_init(ins);
 	return ins;
 }
-void my_dispatcher_dispose(MyDispatcher* obj){
-	//resource allocation, free ptr in  MyDispatcher;
-	if(obj->buf){
-		printf("free buffe len %d\n",obj->buf_len);
-		free(obj->buf);
-		obj->buf=NULL;
+void my_dispatcher_dispose(MyDispatcher* self){
+	if(!self){
+		return;
 	}
-	printf("%s\n",__FUNCTION__);
+	if(self->fd){
+		su_socket_destroy(self->fd);
+	}
+	printf("%s %p\n",__FUNCTION__,self);
 	MyObjectClass *parent_class=my_object_vtable();
-	MY_OBJECT_CLASS(parent_class)->dispose(MY_OBJECT(obj));
+	MY_OBJECT_CLASS(parent_class)->dispose(MY_OBJECT(self));
 }
 void my_dispatcher_unref(MyDispatcher* obj){
 	my_object_unref(MY_OBJECT(obj));
@@ -48,4 +74,11 @@ void my_dispatcher_class_init(){
 	kclass->write_event=my_dispacther_write_event;
 
 	MY_OBJECT_CLASS(kclass)->dispose=my_dispatcher_dispose;
+}
+void my_dispatcher_init(MyDispatcher *self){
+	if(!self){return ;}
+	self->fd=-1;
+	self->request_event=0;
+	self->closed=false;
+	self->request_event=MY_EV_READ;
 }

@@ -186,7 +186,7 @@ int su_tcp_create(su_socket *fd)
 	return 0;
 }
 
-int su_tcp_listen_create(uint16_t port, su_socket *fd)
+int su_tcp_listen_create(const char *ip,uint16_t port, su_socket *fd)
 {
 	int s;
 	int flags, buf_size;
@@ -205,9 +205,14 @@ int su_tcp_listen_create(uint16_t port, su_socket *fd)
 	buf_size = 16 * 1024;
 	setsockopt(s, SOL_SOCKET, SO_RCVBUF, (void *)&buf_size, sizeof(int32_t));
 	setsockopt(s, SOL_SOCKET, SO_SNDBUF, (void *)&buf_size, sizeof(int32_t));
-
+	int flag=1,len=sizeof(int);
+	setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &flag, len);
+	setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &flag, len);
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	if (ip == NULL || strlen(ip) == 0)
+		addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	else
+		addr.sin_addr.s_addr = inet_addr(ip);
 	addr.sin_port = htons(port);
 
 	if (bind(s, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < 0)
@@ -228,8 +233,12 @@ int su_tcp_listen_create(uint16_t port, su_socket *fd)
 
 	return 0;
 }
-
-int su_socket_noblocking(int fd)
+su_socket   su_accept(su_socket fd, su_addr* addr,int *addrlen){
+	su_socket new_fd;
+	new_fd=accept(fd,addr,addrlen); 
+	return new_fd;
+}
+int su_socket_noblocking(su_socket fd)
 {
 	int val = fcntl(fd, F_GETFL, 0);
 	fcntl(fd, F_SETFL, val | O_NONBLOCK);

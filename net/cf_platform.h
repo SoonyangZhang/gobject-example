@@ -70,7 +70,8 @@ int64_t		su_get_sys_time();
 
 int			su_udp_create(const char* ip, uint16_t port, su_socket* fd);
 int			su_tcp_create(su_socket* fd);
-int			su_tcp_listen_create(uint16_t port, su_socket* fd);
+int			su_tcp_listen_create(const char *ip,uint16_t port, su_socket* fd);
+su_socket   su_accept(su_socket fd, su_addr* addr,int *addrlen);
 
 void		su_set_addr(su_addr* addr, const char* ip, uint16_t port);
 
@@ -79,7 +80,7 @@ void		su_set_addr2(su_addr* addr, uint32_t ip, uint16_t port);
 int32_t		su_udp_send(su_socket fd, su_addr* addr, void* buf, uint32_t len);
 int32_t		su_udp_recv(su_socket fd, su_addr* addr, void* buf, uint32_t len, uint32_t ms);
 
-int			su_socket_noblocking(int fd);
+int			su_socket_noblocking(su_socket fd);
 void		su_socket_destroy(su_socket fd);
 
 uint32_t	su_get_local_ip();

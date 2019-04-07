@@ -1,16 +1,16 @@
 #include "my_object.h"
+#include "alloc.h"
 void my_object_dispose(MyObject *obj);
 MyObjectClass vtable={
 .dispose=my_object_dispose,
 };
 void my_object_free(MyObject *obj){
 	obj->vtable->dispose(obj);
-	free(obj);
+	my_free(obj);
 }
 void *my_object_create(int size){
 	MyObject *ins=NULL;
-	ins=(MyObject*)malloc(size);
-	memset(ins,0,size);
+	ins=my_malloc(size);
 	if(ins){
 		ins->lock=0;
 		ins->count=1;

@@ -9,14 +9,22 @@ typedef struct _MyDispatcherChildClass MyDispatcherChildClass;
 MyDispatcherChildClass *vtable=(MyDispatcherChildClass*)MY_OBJECT_VTABLE(obj);\
 vtable->method(__VA_ARGS__);\
 }while(0)
+
+#define MY_DISPATCHER_CHILD_FIELD \
+MY_DISPATCHER_FIELD;\
+int a
 struct _MyDispatcherChild{
-	MyDispatcher parent;
-	int a;
+	MyObject root;
+	MY_DISPATCHER_CHILD_FIELD;
 };
+
+#define MY_DISPATCHER_CHILD_FUN_FIELD \
+MY_DISPATCHER_FUN_FIELD;\
+void (*fun1)(void);\
+void (*fun2)(void)
 struct _MyDispatcherChildClass{
-	MyDispatcherClass parent_class;
-	void (*fun1)(void);
-	void (*fun2)(void);
+	MyObjectClass root_class;
+	MY_DISPATCHER_CHILD_FUN_FIELD;
 };
 MyDispatcherChild* my_dispacher_child_new();
 void my_dispatcher_child_free(MyDispatcherChild* obj);

@@ -1,6 +1,6 @@
-#include "alloc.h"
 #include <stdlib.h>
 #include <string.h>
+#include "alloc.h"
 void *my_malloc(int size){
 	void *ins=NULL;
 	ins=malloc(size);

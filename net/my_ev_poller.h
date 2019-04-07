@@ -6,7 +6,7 @@ typedef struct _MyPollerInterface MyPollerInterface;
 struct _MyPollerInterface{
 	MyPoller* (*poller_create)(void);
 	void (*poller_destroy)(MyPoller* poller);
-	void (*poller_poll)(MyPoller* poller,my_ev_timeval *timeout);
+	void (*poller_poll)(MyPoller* poller,int timeout_ms);
 	void (*poller_modify)(MyPoller* poller,void *dispatcher,int op);
 	void (*poller_notify)(MyPoller* poller);
 };

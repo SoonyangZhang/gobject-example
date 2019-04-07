@@ -1,37 +1,42 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <signal.h>
 #include  "netutils.h"
 #include "my_ev_poller.h"
 #include "my_dispatcher.h"
+#include "cf_platform.h"
 #include "my_dispatcher_child.h"
+#include "my_listener.h"
+int running=1;
+void signal_exit_handler(int sig)
+{
+	running=0;
+}
 int main(){
-	MyPollerInterface *pollerimpl=my_get_poller_impl();
-	MyPoller *poller=pollerimpl->poller_create();	
-	MyDispatcher *dispatcher1=my_dispatcher_new();
-	pollerimpl->poller_modify(poller,dispatcher1,MY_EV_ADD_OP);
-	MyDispatcher *dispatcher2=my_dispatcher_new();
-	pollerimpl->poller_modify(poller,dispatcher2,MY_EV_ADD_OP);
-	MyDispatcher *dispatcher3=my_dispatcher_new();
-	pollerimpl->poller_modify(poller,dispatcher3,MY_EV_ADD_OP);
-	pollerimpl->poller_poll(poller,NULL);
-	pollerimpl->poller_modify(poller,dispatcher2,MY_EV_DEL_OP);
-	pollerimpl->poller_poll(poller,NULL);
-	my_dispatcher_unref(dispatcher1);
-	my_dispatcher_unref(dispatcher2);
-	my_dispatcher_unref(dispatcher3);
-	pollerimpl->poller_modify(poller,dispatcher1,MY_EV_DEL_OP);
-	pollerimpl->poller_modify(poller,dispatcher3,MY_EV_DEL_OP);
-	pollerimpl->poller_poll(poller,NULL);
-	pollerimpl->poller_destroy(poller);
-	/*MyDispatcherChild *child=my_dispatcher_child_new();
-	my_dispatcher_call(child,read_event,child);
-	my_dispatcher_child_call(child,fun1);
-	
-	MY_DISPATCHER(child)->buf=malloc(8*sizeof(uint8_t));
-	MY_DISPATCHER(child)->buf_len=8;
-	printf("%p\n",child->parent.parent.vtable);
-	printf("%p\n",my_dispatcher_child_vtable());
-	my_dispather_child_free(child);*/
+	signal(SIGTERM, signal_exit_handler);
+	signal(SIGINT, signal_exit_handler);
+	signal(SIGTSTP, signal_exit_handler);
+	char *ip="127.0.0.1";
+	uint16_t port=4321;
+	su_socket fd;
+	su_tcp_listen_create(ip,port,&fd);
+	su_socket_noblocking(fd);
+	MyPollerInterface *pollfun=my_get_poller_impl();
+	MyPoller *poller=pollfun->poller_create();	
+	MyListener *listener=my_listener_new();
+	listener->fd=fd;
+	listener->poller=poller;
+	listener->pollfun=pollfun;
+	pollfun->poller_modify(poller,listener,MY_EV_ADD_OP);
+	int timeout=100;
+	while(running){
+		pollfun->poller_poll(poller,NULL);
+	}
+	pollfun->poller_destroy(poller);
+	/*MyDispatcher *dispatcher=my_dispatcher_new();
+	my_dispatcher_call(dispatcher,read_event,dispatcher);*/
+	my_object_unref(MY_OBJECT(listener));
+	//my_object_unref(MY_OBJECT(dispatcher));
     return 0;
 }
 
