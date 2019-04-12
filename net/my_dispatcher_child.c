@@ -14,7 +14,7 @@ void my_child_read_event(MyDispatcherChild *self){
 MyDispatcherChild* my_dispatcher_child_new(){
 	MyDispatcherChild *ins;
 	ins=(MyDispatcherChild *)my_object_create(sizeof(MyDispatcherChild));
-	MY_OBJECT_VTABLE(ins)=my_dispatcher_child_vtable();
+	my_dispatcher_child_init(ins);
 	return ins;
 }
 void my_dispatcher_child_dispose(MyDispatcherChild* obj){
@@ -43,5 +43,8 @@ void my_dispatcher_child_class_init(void){
 
 	MY_OBJECT_CLASS(kclass)->dispose=my_dispatcher_child_dispose;
 }
-
+void my_dispatcher_child_init(MyDispatcherChild *self){
+	my_dispatcher_init(MY_DISPATCHER(self));	
+	MY_OBJECT_VTABLE(self)=my_dispatcher_child_vtable();
+}
 

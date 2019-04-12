@@ -25,9 +25,12 @@ struct _MyObject{
 
 struct _MyObjectClass{
 	void (*dispose)(MyObject*obj);
+	void (*copy)(MyObject* src,MyObject* o);
 };
 void *my_object_create(int size);
 void *my_object_ref(MyObject *obj);
 void my_object_unref(MyObject *obj);
+void my_object_copy(MyObject* src,MyObject* o);
 MyObjectClass *my_object_vtable();
+void my_object_init(MyObject *obj);
 #endif /* MY_OBJECT_H_ */

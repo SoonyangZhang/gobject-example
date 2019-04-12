@@ -1,8 +1,10 @@
 #include "my_object.h"
 #include "alloc.h"
-void my_object_dispose(MyObject *obj);
+void my_object_null_dispose(MyObject *obj);
+void my_object_null_copy(MyObject* src,MyObject* o);
 MyObjectClass vtable={
-.dispose=my_object_dispose,
+.dispose=my_object_null_dispose,
+.copy=my_object_null_copy,
 };
 void my_object_free(MyObject *obj){
 	obj->vtable->dispose(obj);
@@ -40,6 +42,15 @@ void my_object_unref(MyObject *obj){
 MyObjectClass * my_object_vtable(){
 	return &vtable;
 }
-void my_object_dispose(MyObject *obj){
+void my_object_null_dispose(MyObject *obj){
 printf("%s\n",__FUNCTION__);
+}
+void my_object_null_copy(MyObject* src,MyObject* o){
+
+}
+void my_object_copy(MyObject* src,MyObject* o){
+	src->vtable->copy(src,o);
+}
+void my_object_init(MyObject *obj){
+	obj->vtable=my_object_vtable();
 }

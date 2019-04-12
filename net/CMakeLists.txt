@@ -9,5 +9,6 @@ my_object.c
 my_dispatcher.c
 my_dispatcher_child.c
 my_listener.c
+my_string.c
 )
 add_library(net STATIC ${net_LIB})

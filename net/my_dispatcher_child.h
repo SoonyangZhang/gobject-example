@@ -29,6 +29,6 @@ struct _MyDispatcherChildClass{
 MyDispatcherChild* my_dispacher_child_new();
 void my_dispatcher_child_free(MyDispatcherChild* obj);
 MyDispatcherChildClass* my_dispatcher_child_vtable();
-
+void my_dispatcher_child_init(MyDispatcherChild *self);
 
 #endif /* MY_DISPATCHER_CHILD_H_ */

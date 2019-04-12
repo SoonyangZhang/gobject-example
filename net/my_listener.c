@@ -29,7 +29,6 @@ void my_listener_write(MyListener *self,void *data,int len){
 MyListener* my_listener_new(){
 	MyListener *ins;
 	ins=(MyListener*)my_object_create(sizeof(MyListener));
-	MY_OBJECT_VTABLE(ins)=my_listener_vtable();
 	my_listener_init(ins);
 	return ins;
 }
@@ -49,6 +48,7 @@ void my_listener_init(MyListener *self){
 		return ;
 	}
 	my_dispatcher_init(MY_DISPATCHER(self));
+	MY_OBJECT_VTABLE(self)=my_listener_vtable();
 	self->request_event=MY_EV_ACCEPT;
 }
 void my_listerer_class_init(){

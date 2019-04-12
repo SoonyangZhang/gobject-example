@@ -40,7 +40,6 @@ int my_dispacther_write(MyDispatcher *self,void *data,int len){
 MyDispatcher* my_dispatcher_new(){
 	MyDispatcher *ins;
 	ins=(MyDispatcher*)my_object_create(sizeof(MyDispatcher));
-	MY_OBJECT_VTABLE(ins)=my_dispatcher_vtable();
 	my_dispatcher_init(ins);
 	return ins;
 }
@@ -77,6 +76,8 @@ void my_dispatcher_class_init(){
 }
 void my_dispatcher_init(MyDispatcher *self){
 	if(!self){return ;}
+	my_object_init(self);
+	MY_OBJECT_VTABLE(self)=my_dispatcher_vtable();
 	self->fd=-1;
 	self->request_event=0;
 	self->closed=false;
