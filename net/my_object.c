@@ -30,6 +30,7 @@ void *my_object_ref(MyObject *obj){
 	return ins;
 }
 void my_object_unref(MyObject *obj){
+	if(!obj){return;}
 	atomic_lock(&obj->lock);
 	if(obj->count){
 		obj->count--;

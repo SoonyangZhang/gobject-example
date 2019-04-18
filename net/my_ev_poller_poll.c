@@ -84,6 +84,9 @@ MyPoller* my_poller_create(void){
 	return poller;
 }
 void my_poller_destroy(MyPoller* poller){
+	if(!poller){
+		return;
+	}
 	PollPoller *self=(PollPoller*)poller;
 	MyDispatcherWrapper *itor=NULL;
 	MyDispatcherWrapper *itor_tmp=NULL;
@@ -141,19 +144,21 @@ void my_poller_poll(MyPoller* poller,int timeout_ms){
 				int fd=self->events[i].fd;
 				MyDispatcherWrapper * found=NULL;
 				if(self->events[i].revents&((POLLIN|POLLERR|POLLPRI))){
-					printf("event\n");
+					if(self->events[i].revents&POLLIN){
+						printf("poll read\n");
+					}
 					HASH_FIND(hh_sock,self->sock_h,&fd,sizeof(fd),found);
 					if(found){
 					MyDispatcher *dispatcher=found->dispatcher_ref;
 					printf("%d %p\n",fd,dispatcher);
-					my_dispatcher_call(dispatcher,read_event,dispatcher);
+					my_dispatcher_call(dispatcher,read_event);
 					}
 				}
 				if(self->events[i].revents&(POLLOUT)){
 					HASH_FIND(hh_sock,self->sock_h,&fd,sizeof(fd),found);
 					if(found){
 						MyDispatcher *dispatcher=found->dispatcher_ref;
-						my_dispatcher_call(dispatcher,write_event,dispatcher);
+						my_dispatcher_call(dispatcher,write_event);
 					}				
 				}
 			}

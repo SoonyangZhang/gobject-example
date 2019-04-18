@@ -1,30 +1,41 @@
 #include "my_listener.h"
 #include "my_ev_poller.h"
-MyListenerClass  default_vtable;
+MyListenerClass  my_listener_default_vtable;
 static bool class_inited=false;
 void my_listerer_class_init();
 void my_listener_read_event(MyListener *self){
-	su_addr addr;
-	int addr_len=sizeof(addr);
-	su_socket new_fd=su_accept(self->fd,&addr,&addr_len);
-	if(new_fd!=-1){
-		printf("new con\n");
-		su_socket_noblocking(new_fd);
-		MyPollerInterface *pollfun=(MyPollerInterface*)self->pollfun;
-		MyDispatcher *con=my_dispatcher_new();
-		con->fd=new_fd;
-		con->poller=self->poller;
-		con->pollfun=pollfun;
-		con->request_event=MY_EV_READ;
-		pollfun->poller_modify(self->poller,con,MY_EV_ADD_OP);
-		my_object_unref(MY_OBJECT(con));
+	printf("%s\n",__FUNCTION__);
+	MyDispatcher *dis=NULL;
+	if(self->usr&&self->notify_read){
+		printf("call cloursure\n");
+		self->notify_read(self,self->usr);
+	}else{
+		my_dispatcher_call_return(dis,self,accept);
+		my_object_unref(MY_OBJECT(dis));		
 	}
 }
 void my_listener_write_event(MyListener *self){
 
 }
 void my_listener_write(MyListener *self,void *data,int len){
-	printf("%s should not be called\n",__FUNCTION__);
+	
+}
+MyDispatcher *my_listener_accept(MyListener *self){
+	su_addr addr;
+	int addr_len=sizeof(addr);
+	su_socket new_fd=su_accept(self->fd,&addr,&addr_len);
+	MyDispatcher *con=my_dispatcher_new();
+	if(new_fd!=-1){
+		printf("new con\n");
+		su_socket_noblocking(new_fd);
+		MyPollerInterface *pollfun=(MyPollerInterface*)self->pollfun;
+		con->fd=new_fd;
+		con->poller=self->poller;
+		con->pollfun=pollfun;
+		con->request_event=MY_EV_READ;
+		pollfun->poller_modify(self->poller,con,MY_EV_ADD_OP);
+	}
+	return con;
 }
 MyListener* my_listener_new(){
 	MyListener *ins;
@@ -33,7 +44,7 @@ MyListener* my_listener_new(){
 	return ins;
 }
 void my_listener_dispose(MyListener *self){
-	printf("%s\n",__FUNCTION__);
+	printf("%s %p\n",__FUNCTION__,self);
 	MyDispatcherClass *parent_class=my_dispatcher_vtable();
 	MY_OBJECT_CLASS(parent_class)->dispose(MY_OBJECT(self));
 }
@@ -41,7 +52,7 @@ MyListenerClass *my_listener_vtable(){
 	if(!class_inited){
 		my_listerer_class_init();
 	}
-	return &default_vtable;
+	return &my_listener_default_vtable;
 }
 void my_listener_init(MyListener *self){
 	if(!self){
@@ -53,14 +64,12 @@ void my_listener_init(MyListener *self){
 }
 void my_listerer_class_init(){
 	class_inited=true;
-	MyListenerClass *kclass=&default_vtable;
+	MyListenerClass *kclass=&my_listener_default_vtable;
 	MyDispatcherClass *parent=my_dispatcher_vtable();
 	memcpy(kclass,parent,sizeof(*parent));
 	kclass->read_event=my_listener_read_event;
 	kclass->write_event=my_listener_write_event;
 	kclass->write=my_listener_write;
+	kclass->accept=my_listener_accept;
 	MY_OBJECT_CLASS(kclass)->dispose=my_listener_dispose;
 }
-
-
-

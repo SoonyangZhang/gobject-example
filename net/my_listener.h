@@ -7,17 +7,21 @@ typedef struct _MyListenerClass MyListenerClass;
 #define MY_LISTENER_CLASS(kclass) ((MyListenerClass*)kclass)
 #define my_listerer_call(obj,method,...)  do{\
 MyDispatcherClass *vtable=(MyListenerClass*)MY_OBJECT_VTABLE(obj);\
-vtable->method(__VA_ARGS__);\
+vtable->method(obj,##__VA_ARGS__);\
 }while(0)
 #define MY_LISTENER_FIELD \
-MY_DISPATCHER_FIELD
+MY_DISPATCHER_FIELD 
+
 struct _MyListener{
 	MyObject root;
 	MY_LISTENER_FIELD;
 };
+//MY_DISPATCHER_FUN_FIELD ; a space is needed here
+#define MY_LISTENER_FUN_FIELD \
+MY_DISPATCHER_FUN_FIELD
 struct _MyListenerClass{
 	MyObjectClass root_class;
-	MY_DISPATCHER_FUN_FIELD;
+	MY_LISTENER_FUN_FIELD;
 };
 MyListener* my_listener_new();
 void my_listener_unref(MyListener* obj);

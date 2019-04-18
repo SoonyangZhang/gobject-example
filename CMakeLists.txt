@@ -77,13 +77,9 @@ add_executable(${EXECUTABLE_NAME} boy/disk-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  boy ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 
-set(EXECUTABLE_NAME "gio_server")
-add_executable(${EXECUTABLE_NAME} net/tcpserver.c)
-target_link_libraries(${EXECUTABLE_NAME} ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
-
-set(EXECUTABLE_NAME "gio_client")
-add_executable(${EXECUTABLE_NAME} net/tcpclient.c)
-target_link_libraries(${EXECUTABLE_NAME} ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+#set(EXECUTABLE_NAME "gio_server")
+#add_executable(${EXECUTABLE_NAME} net/tcpserver.c)
+#target_link_libraries(${EXECUTABLE_NAME} ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
 
 
 set(EXECUTABLE_NAME "address")

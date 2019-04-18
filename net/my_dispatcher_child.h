@@ -7,7 +7,7 @@ typedef struct _MyDispatcherChildClass MyDispatcherChildClass;
 #define MY_DISPATCHER_CHILD_CLASS(kclass)((MyDispatcherChildClass*)kclass)
 #define my_dispatcher_child_call(obj,method,...)  do{\
 MyDispatcherChildClass *vtable=(MyDispatcherChildClass*)MY_OBJECT_VTABLE(obj);\
-vtable->method(__VA_ARGS__);\
+vtable->method(obj,##__VA_ARGS__);\
 }while(0)
 
 #define MY_DISPATCHER_CHILD_FIELD \
