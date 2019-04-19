@@ -8,7 +8,6 @@ my_ev_poller_poll.c
 my_object.c
 my_dispatcher.c
 my_dispatcher_child.c
-my_listener.c
 my_string.c
 echoserver.c
 echocon.c

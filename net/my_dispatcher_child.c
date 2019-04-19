@@ -1,5 +1,5 @@
 #include "my_dispatcher_child.h"
-MyDispatcherChildClass  my_dispatcherchild_default_vtable;
+static MyDispatcherChildClass  default_vtable;
 static bool class_inited=false;
 void my_dispatcher_child_class_init(void);
 void my_fun1(void){
@@ -30,11 +30,11 @@ MyDispatcherChildClass* my_dispatcher_child_vtable(){
 	if(!class_inited){
 		my_dispatcher_child_class_init();
 	}
-	return &my_dispatcherchild_default_vtable;
+	return &default_vtable;
 }
 void my_dispatcher_child_class_init(void){
 	class_inited=true;
-	MyDispatcherChildClass *kclass=&my_dispatcherchild_default_vtable;
+	MyDispatcherChildClass *kclass=&default_vtable;
 	MyDispatcherClass *parent=my_dispatcher_vtable();
 	memcpy(kclass,parent,sizeof(*parent));
 	kclass->read_event=my_child_read_event;

@@ -3,13 +3,13 @@
 #include "cf_platform.h"
 #include "my_ev_poller.h"
 // at first, I name it default_vtable,same in mylistener, bug found;
-EchoServerClass  echo_server_default_vtable;
+static EchoServerClass  default_vtable;
 static bool class_inited=false;
 void echo_server_class_init();
 void clousure_read(MyDispatcher *dispatcher,void *usr){
 	printf("%s\n",__FUNCTION__);
 	EchoServer *self=(EchoServer*)usr;
-	MyListener *l=(MyListener*)dispatcher;
+	MyDispatcher *l=(MyDispatcher*)dispatcher;
 	if(self){
 		MyDispatcher *new_dis=NULL;
 		my_dispatcher_call_return(new_dis,l,accept);
@@ -35,8 +35,7 @@ void echo_server_unref(EchoServer *self){
 }
 void echo_server_bind(EchoServer *self,char*ip,uint16_t port){
 	if(!self){return;}
-	self->srv_ref=my_listener_new();
-	printf("%p,listener %p\n",self,self->srv_ref);
+	self->srv_ref=my_dispatcher_new();
 	MyPollerInterface *pollfun=my_get_poller_impl();
 	self->srv_ref->pollfun=pollfun;
 	MyPoller *poller=pollfun->poller_create();
@@ -71,7 +70,6 @@ void echo_server_dispose(EchoServer *self){
 		}
 		self->srv_ref->usr=0;
 		self->srv_ref->notify_read=0;
-		printf("%s %p\n",__FUNCTION__,self->srv_ref);
 		my_object_unref(MY_OBJECT(self->srv_ref));
 		self->srv_ref=0;
 	}
@@ -82,11 +80,11 @@ EchoServerClass* echo_server_vtable(){
 	if(!class_inited){
 		echo_server_class_init();
 	}
-	return &echo_server_default_vtable;
+	return &default_vtable;
 }
 void echo_server_class_init(){
 	class_inited=true;
-	EchoServerClass *kclass=&echo_server_default_vtable;
+	EchoServerClass *kclass=&default_vtable;
 	MyObjectClass *parent=my_object_vtable();
 	memcpy(kclass,parent,sizeof(*parent));
 	kclass->bind=echo_server_bind;

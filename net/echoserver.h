@@ -1,7 +1,7 @@
 #ifndef ECHOSERVER_H_
 #define ECHOSERVER_H_
 #include "my_object.h"
-#include "my_listener.h"
+#include "my_dispatcher.h"
 #define echo_server_call(obj,method,...)  do{\
 EchoServerClass *vtable=(EchoServerClass*)MY_OBJECT_VTABLE(obj);\
 vtable->method(obj,##__VA_ARGS__);\
@@ -10,7 +10,7 @@ typedef struct _EchoServer EchoServer;
 typedef struct _EchoServerClass EchoServerClass;
 struct _EchoServer{
 	MyObject root;
-	MyListener *srv_ref;
+	MyDispatcher *srv_ref;
 };
 struct _EchoServerClass{
 	MyObjectClass root_class;
