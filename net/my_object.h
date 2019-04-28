@@ -21,11 +21,12 @@ struct _MyObject{
 	MyObjectClass *vtable;//quite tricky
 	int lock;
 	int count;
+	char *name;
 };
 
 struct _MyObjectClass{
 	void (*dispose)(MyObject*obj);
-	void (*copy)(MyObject* src,MyObject* o);
+	void (*copy)(MyObject* dst,MyObject* src);
 };
 void *my_object_create(int size);
 void *my_object_ref(MyObject *obj);
@@ -33,4 +34,5 @@ void my_object_unref(MyObject *obj);
 void my_object_copy(MyObject* src,MyObject* o);
 MyObjectClass *my_object_vtable();
 void my_object_init(MyObject *obj);
+void my_object_set_name(MyObject *obj,char *name);
 #endif /* MY_OBJECT_H_ */

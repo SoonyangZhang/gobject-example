@@ -1,7 +1,7 @@
 #include "my_object.h"
 #include "alloc.h"
 void my_object_null_dispose(MyObject *obj);
-void my_object_null_copy(MyObject* src,MyObject* o);
+void my_object_null_copy(MyObject* dst,MyObject* src);
 MyObjectClass vtable={
 .dispose=my_object_null_dispose,
 .copy=my_object_null_copy,
@@ -13,10 +13,6 @@ void my_object_free(MyObject *obj){
 void *my_object_create(int size){
 	MyObject *ins=NULL;
 	ins=my_malloc(size);
-	if(ins){
-		ins->lock=0;
-		ins->count=1;
-	}
 	return ins;
 }
 void *my_object_ref(MyObject *obj){
@@ -44,7 +40,11 @@ MyObjectClass * my_object_vtable(){
 	return &vtable;
 }
 void my_object_null_dispose(MyObject *obj){
-printf("%s\n",__FUNCTION__);
+	printf("%s",__FUNCTION__);
+	if(obj->name){
+		printf("  %s",obj->name);
+	}
+	printf("\n");
 }
 void my_object_null_copy(MyObject* src,MyObject* o){
 
@@ -54,4 +54,12 @@ void my_object_copy(MyObject* src,MyObject* o){
 }
 void my_object_init(MyObject *obj){
 	obj->vtable=my_object_vtable();
+	if(obj){
+		obj->lock=0;
+		obj->count=1;
+		obj->name=0;
+	}	
+}
+void my_object_set_name(MyObject *obj,char *name){
+	obj->name=name;
 }
