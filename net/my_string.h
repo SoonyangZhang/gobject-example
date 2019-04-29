@@ -25,6 +25,8 @@ void my_string_init(MyString *self);
 void my_string_unref(MyString *self);
 int my_string_len(MyString *self);
 void my_string_copy(MyString *dst,MyString *src);
+bool mu_string_equal(MyString *a,MyString *c);
+void my_string_dispose(MyString *self);
 #ifdef __cplusplus
 }
 #endif

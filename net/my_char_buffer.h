@@ -19,6 +19,7 @@ struct _MyCharBufferClass{
 	MyObjectClass root_class;
 };
 MyCharBuffer *my_char_buffer_new();
+void my_char_buffer_dispose(MyCharBuffer*self);
 void my_char_buffer_init(MyCharBuffer*self);
 void my_char_buffer_unref(MyCharBuffer*self);
 void my_char_buffer_set(MyCharBuffer*self,char *c,int len);

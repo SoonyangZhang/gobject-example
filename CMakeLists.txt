@@ -86,6 +86,10 @@ set(EXECUTABLE_NAME "address")
 add_executable(${EXECUTABLE_NAME} net/address-test.c)
 target_link_libraries(${EXECUTABLE_NAME}  net base ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES} pthread)
 
+set(EXECUTABLE_NAME "vector")
+add_executable(${EXECUTABLE_NAME} net/vector-test.c)
+target_link_libraries(${EXECUTABLE_NAME}  net base ${GIO_LIBRARIES} ${Glib_LIBRARIES} ${GObject_LIBRARIES})
+
 set(EXECUTABLE_NAME "client")
 add_executable(${EXECUTABLE_NAME} net/client.c)
 

@@ -1,4 +1,5 @@
 #include "my_string.h"
+#include <string.h>
 static MyStringClass default_vtable;
 static bool class_inited=false;
 static char *name="MyString";
@@ -71,4 +72,16 @@ int my_string_len(MyString *self){
 	}
 	return len;
 }
-
+bool my_string_equal(MyString *a,MyString *b){
+	bool ret=false;
+	if(a&&b&&a->buf&&b->buf){
+		if(a->buf==b->buf){
+			ret=true;
+		}else if(a->buf->len==a->buf->len){
+			if(memcmp(a->buf->c,b->buf->c,a->buf->len)==0){
+				ret=true;
+			}
+		}
+	}
+	return ret;
+}
